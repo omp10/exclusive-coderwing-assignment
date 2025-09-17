@@ -1,0 +1,24 @@
+{
+  "products": [
+    {
+      "id": "p1",
+      "name": "HAVIT HV-G92 Gamepad",
+      "price": 120
+    },
+    {
+      "id": "p2",
+      "name": "AK-900 Wired Keyboard",
+      "price": 960
+    },
+    {
+      "id": "p3",
+      "name": "IPS LCD Gaming Monitor",
+      "price": 370
+    },
+    {
+      "id": "p4",
+      "name": "S-Series Comfort Chair",
+      "price": 375
+    }
+  ]
+}

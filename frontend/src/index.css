@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* App base styles */
+:root {
+  /* This can be removed or set to 'light' to enforce the light theme */
+  color-scheme: light; 
+}
+
+body {
+  margin: 0;
+  /* Optional: Set a background color for the body if needed */
+  background-color: #ffffff; /* White background */
+}
+
+#root {
+  min-height: 100dvh;
+}
