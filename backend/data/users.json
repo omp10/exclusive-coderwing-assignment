@@ -5,6 +5,12 @@
       "name": "test",
       "email": "test@gmail.com",
       "passwordHash": "$2b$10$2WmHvphzt5/09/fk62q2MuN/UcTfYYbaSMIA5lUPp7g0ndxN3PdpG"
+    },
+    {
+      "id": "1758102317688",
+      "name": "abc",
+      "email": "abc@gmail.com",
+      "passwordHash": "$2b$10$Y5fOaVud83bvbEPPOj1mHOOKUR7MAL9iI4yfpahKeBB.o1b1As2ce"
     }
   ]
 }
