@@ -1,3 +1,10 @@
 {
-  "users": []
+  "users": [
+    {
+      "id": "1758101030453",
+      "name": "test",
+      "email": "test@gmail.com",
+      "passwordHash": "$2b$10$2WmHvphzt5/09/fk62q2MuN/UcTfYYbaSMIA5lUPp7g0ndxN3PdpG"
+    }
+  ]
 }

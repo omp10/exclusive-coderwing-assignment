@@ -16,6 +16,7 @@ import {
   FaGamepad,
 } from "react-icons/fa";
 import { FaTruck, FaHeadset, FaShieldAlt } from "react-icons/fa";
+import { apiGet, apiPost } from "../lib/api";
 
 // Product data for the flash sale section
 const flashSaleProducts = [
@@ -259,17 +260,55 @@ export function Home() {
   bannerTargetDate.setSeconds(bannerTargetDate.getSeconds() + 35);
 
   const [cartItems, setCartItems] = useState([]);
+  const [apiProducts, setApiProducts] = useState(null);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [adding, setAdding] = useState({});
 
-  const handleAddToCart = (product) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === product.id);
-      if (existingItem) {
-        return prevItems.map(item =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
+  useEffect(() => {
+    (async () => {
+      try {
+        const { products } = await apiGet('/products');
+        setApiProducts(products);
+      } catch (e) {
+        // Ignore for now; UI has static placeholders
+      } finally {
+        setLoadingProducts(false);
       }
-      return [...prevItems, { ...product, quantity: 1 }];
+    })();
+  }, []);
+
+  function resolveProductIdForApi(product) {
+    // If the product already has a backend-like id (e.g., "p1"), use it
+    if (typeof product.id === 'string' && product.id.startsWith('p')) return product.id
+    // Try to find by exact name match in loaded backend products
+    if (apiProducts && product?.name) {
+      const match = apiProducts.find(p => (p.name || '').toLowerCase() === product.name.toLowerCase())
+      if (match) return match.id
+    }
+    return null
+  }
+
+  const handleAddToCart = async (product) => {
+    // optimistic local counter for UI
+    setCartItems(prev => {
+      const existing = prev.find(i => i.id === product.id);
+      if (existing) return prev.map(i => i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
+      return [...prev, { ...product, quantity: 1 }];
     });
+    try {
+      setAdding(a => ({ ...a, [product.id]: true }));
+      const productId = resolveProductIdForApi(product);
+      if (!productId) {
+        throw { error: 'This demo item is not in the backend catalog yet.' }
+      }
+      await apiPost('/cart', { productId, quantity: 1 }, true);
+      // notify nav/cart listeners
+      window.dispatchEvent(new CustomEvent('cart-updated'))
+    } catch (e) {
+      alert(e?.error || 'Failed to add to cart. Please sign up/login first.');
+    } finally {
+      setAdding(a => ({ ...a, [product.id]: false }));
+    }
   };
 
   const totalCartItems = cartItems.reduce((total, item) => total + item.quantity, 0);

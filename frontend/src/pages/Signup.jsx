@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { FaGoogle } from 'react-icons/fa';
+import { apiPost, saveAuthToken } from '../lib/api';
+import { useNavigate } from 'react-router-dom';
 
 export function Signup() {
   const [formValues, setFormValues] = useState({ name: '', email: '', password: '' });
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   function validate(values) {
     const nextErrors = {};
@@ -18,13 +22,21 @@ export function Signup() {
     setFormValues(v => ({ ...v, [name]: value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const v = validate(formValues);
     setErrors(v);
-    if (Object.keys(v).length === 0) {
-      // Placeholder: integrate with backend later
-      alert(`Welcome, ${formValues.name}! Account created.`);
+    if (Object.keys(v).length !== 0) return;
+    try {
+      setSubmitting(true);
+      const res = await apiPost('/auth/register', formValues);
+      saveAuthToken(res.token);
+      navigate('/');
+    } catch (err) {
+      const message = err?.error || 'Signup failed';
+      alert(message);
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -81,8 +93,8 @@ export function Signup() {
                 {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
               </div>
 
-              <button type="submit" className="w-full rounded-md bg-red-500 py-3 font-semibold text-white transition-colors hover:bg-red-600">
-                Create Account
+              <button type="submit" disabled={submitting} className="w-full rounded-md bg-red-500 py-3 font-semibold text-white transition-colors hover:bg-red-600 disabled:opacity-60">
+                {submitting ? 'Creating...' : 'Create Account'}
               </button>
               
               <button className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-100">

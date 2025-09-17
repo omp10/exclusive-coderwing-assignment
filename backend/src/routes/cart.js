@@ -53,6 +53,20 @@ cartRouter.post('/', requireAuth, async (req, res) => {
   res.status(201).json({ cart })
 })
 
+// DELETE /api/cart - clear current user's cart
+cartRouter.delete('/', requireAuth, async (req, res) => {
+  const cartsDb = await readJson('carts')
+  let cart = cartsDb.carts.find(c => c.userId === req.user.id)
+  if (!cart) {
+    cart = { userId: req.user.id, items: [] }
+    cartsDb.carts.push(cart)
+  } else {
+    cart.items = []
+  }
+  await writeJson('carts', cartsDb)
+  res.json({ cart })
+})
+
 module.exports = { cartRouter }
 
 

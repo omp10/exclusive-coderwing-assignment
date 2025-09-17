@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { NavBar } from './components/NavBar'
 import { Home } from './pages/Home'
 import { Signup } from './pages/Signup'
+import { Cart } from './pages/Cart'
 import { PromoBar } from './components/PromoBar'
 import { Footer } from './components/Footer'
 
@@ -16,6 +17,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/cart" element={<Cart />} />
           </Routes>
         </main>
         <Footer />

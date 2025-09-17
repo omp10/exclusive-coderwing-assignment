@@ -1,3 +1,17 @@
 {
-  "carts": []
+  "carts": [
+    {
+      "userId": "1758101030453",
+      "items": [
+        {
+          "productId": "p1",
+          "quantity": 2
+        },
+        {
+          "productId": "p2",
+          "quantity": 1
+        }
+      ]
+    }
+  ]
 }

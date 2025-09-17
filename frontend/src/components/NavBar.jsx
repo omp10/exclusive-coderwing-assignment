@@ -1,11 +1,32 @@
 import { Link, NavLink } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { FaSearch, FaRegHeart, FaShoppingCart } from 'react-icons/fa';
+import { apiGet } from '../lib/api';
 
 export function NavBar() {
   const linkClass = ({ isActive }) =>
     `relative py-2 font-medium transition-colors before:absolute before:bottom-0 before:left-0 before:h-0.5 before:w-full before:scale-x-0 before:bg-black before:transition-transform before:duration-300 hover:text-gray-900 dark:hover:text-gray-100 ${
       isActive ? 'text-black before:scale-x-100' : 'text-gray-600 dark:text-gray-400'
     }`;
+
+  const [cartCount, setCartCount] = useState(0);
+
+  async function refreshCartCount() {
+    try {
+      const { cart } = await apiGet('/cart');
+      const count = (cart?.items || []).reduce((n, i) => n + (i.quantity || 0), 0);
+      setCartCount(count);
+    } catch {
+      setCartCount(0);
+    }
+  }
+
+  useEffect(() => {
+    refreshCartCount();
+    const handler = () => refreshCartCount();
+    window.addEventListener('cart-updated', handler);
+    return () => window.removeEventListener('cart-updated', handler);
+  }, []);
 
   return (
     <header className="border-b">
@@ -44,7 +65,14 @@ export function NavBar() {
           {/* Icons */}
           <div className="flex items-center gap-4">
             <FaRegHeart className="h-5 w-5 cursor-pointer text-gray-700 hover:text-black" />
-            <FaShoppingCart className="h-5 w-5 cursor-pointer text-gray-700 hover:text-black" />
+            <Link to="/cart" aria-label="Cart" className="relative inline-flex">
+              <FaShoppingCart className="h-5 w-5 cursor-pointer text-gray-700 hover:text-black" />
+              {cartCount > 0 && (
+                <span className="absolute -right-2 -top-2 rounded-full bg-red-500 px-1.5 text-[10px] font-bold leading-4 text-white">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
           </div>
         </div>
       </div>
